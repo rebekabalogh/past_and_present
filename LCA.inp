@@ -1,0 +1,39 @@
+
+TITLE: direct effects without specifying SUBPOPULATION IS d_indscus_lw>0;
+DATA: File is /path/Processing/Mplus/R_all.dat;
+VARIABLE:
+NAMES ARE pidp  contract mjh quartile pension_member jbrise unpaidot longhrs livinghrs irregular
+     inf_flex recent_training tujbpl strata psu e_indscus_lw
+     d_indscus_lw;
+
+USEVARIABLES ARE contract mjh quartile pension_member jbrise unpaidot longhrs
+     livinghrs irregular inf_flex recent_training tujbpl;
+CATEGORICAL ARE contract mjh quartile pension_member jbrise unpaidot longhrs
+     livinghrs irregular inf_flex recent_training tujbpl;
+IDVARIABLE IS pidp;
+STRAT IS strata; 
+CLUSTER IS psu; 
+WEIGHT IS d_indscus_lw;
+SUBPOPULATION IS d_indscus_lw>0;
+MISSING ARE ALL (9999);
+CLASSES = c (6);
+Analysis:
+  TYPE = complex mixture;
+STARTS = 2000 500;
+PROCESSORS=2;
+PARAMETERIZATION=RESCOV;
+
+
+MODEL: 
+%OVERALL%
+longhrs   with    quartile;
+Livinghrs   with    quartile;
+longhrs   with    unpaidot;
+Livinghrs   with    unpaidot;
+
+SAVEDATA:
+FILE IS postprobs_final.dat; 
+SAVE = CPROBABILITIES;
+
+output:
+tech10  tech11;
